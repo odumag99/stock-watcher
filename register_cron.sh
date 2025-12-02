@@ -7,4 +7,4 @@
 sudo systemctl enable cron
 sudo systemctl start cron
 
-echo "0 * * * * docker compose -f ${PWD}/docker-compose.yaml run --rm watcher >> ${PWD}/logs 2>&1" | crontab -
+echo "0 * * * * docker compose -f ${PWD}/docker-compose.yaml run --rm stock_watcher >> ${PWD}/logs 2>&1" | crontab -
