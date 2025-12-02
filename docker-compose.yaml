@@ -1,0 +1,8 @@
+services:
+  stock_watcher:
+    container_name: stock_watcher
+    image: odumag99/stock_watcher:latest
+    env_file:
+      - .env
+    volumes:
+      - ./RECENT_NOTIFICATION_DATETIME:/app/RECENT_NOTIFICATION_DATETIME:rw
