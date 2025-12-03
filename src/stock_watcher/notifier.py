@@ -19,6 +19,7 @@ class Notifier:
         self.watch_result: WatchResult = watch_result
 
     async def execute(self):
+        from .notification_record_store import NotificationRecordStore
         if not self.watch_result.should_notify:
             logger.info(f"{self.watch_result.korean_name} 기준에 미치지 못해 알림을 보내지 않습니다.")
             return
@@ -27,7 +28,10 @@ class Notifier:
             logger.info(f"{self.watch_result.korean_name} 최근 알림 이후 최소 알림 간격 이내로 알림을 보내지 않습니다.")
             return
         
-        await self._send_mail_notification()
+        await self._send_telebot_notification()
+        await NotificationRecordStore().update_notification_record(
+            stock_symbol=self.watch_result.stock_symbol
+        )
         logger.info(f"{self.watch_result.korean_name} 알림을 보냈습니다.")
 
     async def _should_send_notification(self) -> bool:
@@ -49,6 +53,17 @@ class Notifier:
             self.watch_result.stock_symbol
         )
 
+    async def _send_telebot_notification(self):
+        from .telebot_sender import TelebotSender
+        from .notification_record_store import NotificationRecordStore
+
+        message = (
+            f"[Stock Watcher] {self.watch_result.korean_name}({self.watch_result.stock_symbol}) 알림\n"
+            f"{self.watch_result.message}"
+        )
+        await TelebotSender().send_message(message)
+
+
     async def _send_mail_notification(self):
         from .mail_sender import MailSender
         from .notification_record_store import NotificationRecordStore
@@ -68,10 +83,6 @@ class Notifier:
             subject=subject,
             body=body,
             to=to,
-        )
-
-        await NotificationRecordStore().update_notification_record(
-            stock_symbol=self.watch_result.stock_symbol
         )
 
         
