@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from time import sleep
 from dotenv import load_dotenv
 import smtplib
 import os
@@ -41,11 +42,47 @@ def get_recent_notification_datetime() -> datetime:
     recent_notification_datetime = datetime.strptime(recent_notification_datetime_str, DATETIME_FORMAT)
     return recent_notification_datetime
 
-def get_present_price(ticker: str) -> float:
+def get_recent_price(ticker: str) -> float:
     import yfinance as yf
-    yf_ticker = yf.Ticker(ticker)
-    present_price = yf_ticker.history(period="1d")["Low"].iloc[0]
-    return present_price
+    yf_fail_count = 0
+    
+    while True:
+        try:
+            yf_ticker = yf.Ticker(ticker)
+            break
+        except Exception as e:
+            yf_fail_count += 1
+
+            if yf_fail_count > 5:
+                print("yfinance에서 티커 생성 5회 실패, 종료합니다.")
+                raise e
+            
+            print(f"yfinance에서 티커 생성 실패: {e}, {yf_fail_count}회 재시도 중...")
+            sleep(1)
+
+    yf_fail_count = 0
+    interval = timedelta(hours=1)
+    start_datetime = datetime.now() - interval
+    
+    while True:
+        try:
+            history = yf_ticker.history(interval='1h', start=start_datetime)
+            if history.empty:
+                start_datetime -= interval
+                continue
+            else:
+                break
+        except Exception as e:
+            yf_fail_count += 1
+
+            if yf_fail_count > 5:
+                print("yfinance에서 history 데이터 불러오기 5회 실패, 종료합니다.")
+                raise e
+
+            print(f"yfinance에서 history 데이터 불러오기 실패: {e}, {yf_fail_count}회 재시도 중...")
+            sleep(1)
+            
+    return history.iloc[-1].loc['Close']
 
 def get_criteria_price() -> float:
     # 기준 날짜
@@ -67,7 +104,7 @@ def write_recent_notification_datetime(dt: datetime):
         f.write(dt.strftime(DATETIME_FORMAT))
 
 def main():
-    present_price = get_present_price(STOCK_SYMBOL)
+    present_price = get_recent_price(STOCK_SYMBOL)
     criteria_price = get_criteria_price()
     print(f"{datetime.now().strftime(DATETIME_FORMAT)} - {STOCK_NAME}({STOCK_SYMBOL}) 최근 최저 가격 {present_price:,.0f}원, 기준 가격 {criteria_price:,.0f}원", end="")
 
