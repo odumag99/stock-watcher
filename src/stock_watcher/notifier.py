@@ -27,7 +27,7 @@ class Notifier:
             logger.info(f"{self.watch_result.korean_name} 최근 알림 이후 최소 알림 간격 이내로 알림을 보내지 않습니다.")
             return
         
-        await self._send_notification()
+        await self._send_mail_notification()
         logger.info(f"{self.watch_result.korean_name} 알림을 보냈습니다.")
 
     async def _should_send_notification(self) -> bool:
@@ -49,7 +49,7 @@ class Notifier:
             self.watch_result.stock_symbol
         )
 
-    async def _send_notification(self):
+    async def _send_mail_notification(self):
         from .mail_sender import MailSender
         from .notification_record_store import NotificationRecordStore
 
