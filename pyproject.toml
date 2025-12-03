@@ -1,11 +1,16 @@
 [project]
-name = "stock-watcher"
+name = "stock_watcher"
 version = "0.1.0"
 description = "Add your description here"
-readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "aiosmtplib>=5.0.0",
+    "aiosqlite>=0.21.0",
     "dotenv>=0.9.9",
     "sqlalchemy>=2.0.44",
     "yfinance>=0.2.66",
 ]
+
+[build-system]
+requires = ["uv_build>=0.9.3,<0.10.0"]
+build-backend = "uv_build"
