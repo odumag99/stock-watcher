@@ -4,7 +4,6 @@ import os
 from dotenv import load_dotenv
 
 from .watch_result import WatchResult
-from .stock_mapper import STOCK_MAPPER
 from .logger import logger
 
 load_dotenv()
@@ -55,7 +54,6 @@ class Notifier:
 
     async def _send_telebot_notification(self):
         from .telebot_sender import TelebotSender
-        from .notification_record_store import NotificationRecordStore
 
         message = (
             f"[Stock Watcher] {self.watch_result.korean_name}({self.watch_result.stock_symbol}) 알림\n"
@@ -66,7 +64,6 @@ class Notifier:
 
     async def _send_mail_notification(self):
         from .mail_sender import MailSender
-        from .notification_record_store import NotificationRecordStore
 
         stock_korean_name = self.watch_result.korean_name
         subject = f"[Stock Watcher] {stock_korean_name} 주가 알림"
