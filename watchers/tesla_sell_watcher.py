@@ -13,10 +13,10 @@ class TeslaSellWatcher(Watcher):
         self.korean_name: str = "테슬라"
         
     async def watch(self) -> WatchResult:
-        current_price = await self._get_current_price()
+        current_price = await self._get_recent_high_price()
         threshold_price = await self._get_threshold_price()
 
-        should_notify = current_price <= threshold_price
+        should_notify = current_price >= threshold_price
         
         if should_notify:
             message = f"""\
@@ -36,11 +36,11 @@ class TeslaSellWatcher(Watcher):
             message=message,
         )
     
-    async def _get_current_price(self) -> float:
-        return await PriceGetter(self.stock_symbol).get_recent_price()
+    async def _get_recent_high_price(self) -> float:
+        return await PriceGetter(self.stock_symbol).get_recent_high_price()
     
     async def _get_threshold_price(self) -> float:
-        base_price = 410
+        base_price = 427
         baseday = datetime.strptime("2025-12-01", "%Y-%m-%d")
         now = datetime.now()
         diff_days = (now - baseday).days
