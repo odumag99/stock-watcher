@@ -37,7 +37,7 @@ class TeslaBuyWatcher(Watcher):
         )
     
     async def _get_current_price(self) -> float:
-        return await PriceGetter(self.stock_symbol).get_recent_price()
+        return await PriceGetter(self.stock_symbol).get_recent_low_price()
     
     async def _get_threshold_price(self) -> float:
         base_price = 407.55

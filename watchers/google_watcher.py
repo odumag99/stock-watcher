@@ -35,4 +35,4 @@ class GoogleWatcher(Watcher):
 
     @classmethod
     async def _get_recent_price(cls) -> float:
-        return await PriceGetter(cls.stock_symbol).get_recent_price()
+        return await PriceGetter(cls.stock_symbol).get_recent_low_price()
