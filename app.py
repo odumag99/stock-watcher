@@ -82,7 +82,7 @@ def get_recent_price(ticker: str) -> float:
             print(f"yfinance에서 history 데이터 불러오기 실패: {e}, {yf_fail_count}회 재시도 중...")
             sleep(1)
             
-    return history.iloc[-1].loc['Close']
+    return history.iloc[-1].loc['Low']
 
 def get_criteria_price() -> float:
     # 기준 날짜
