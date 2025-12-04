@@ -16,4 +16,4 @@ jobs:
             - name: Deploy Application
               run: |
                 docker pull odumag99/stock-watcher:latest
-                docker compose -f docker-compose.yaml run --rm stock_watcher >> ./logs 2>&1 || echo "Deployment failed, check logs for details"
+                docker compose -f docker-compose.yaml run --rm stock_watcher >> ./logs 2>&1
