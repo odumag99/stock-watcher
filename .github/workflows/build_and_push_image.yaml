@@ -1,0 +1,23 @@
+name: Build and Push Stock Watcher Docker Image
+on:
+    push:
+        tags:
+            - '*.*.*'
+jobs:
+    Build-and-Push-Image:
+        runs-on: self-hosted
+        steps:
+            - name: Test echo
+              run: echo "Deploying Stock Watcher Application"
+            - name: Change Working Directory
+              run: cd ~/stock-watcher
+            - name: Checkout Repository
+              uses: actions/checkout@v6
+              with:
+                ref: ${{ github.ref }}
+            - name: Build Docker Image
+              run: |
+                docker build . -t ${{ secrets.DOCKER_USERNAME }}/stock-watcher:${{ github.ref_name }} -t ${{ secrets.DOCKER_USERNAME }}/stock-watcher:latest
+                docker push ${{ secrets.DOCKER_USERNAME }}/stock-watcher:${{ github.ref_name }}
+                docker push ${{ secrets.DOCKER_USERNAME }}/stock-watcher:latest 
+

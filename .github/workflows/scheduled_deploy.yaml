@@ -1,0 +1,19 @@
+name: Schedule Stock Watcher Execution
+on:
+    schedule:
+        - cron: '0 * * * *'  # Runs at the top of every hour
+
+jobs:
+    Scheduled-Deploy:
+        runs-on: self-hosted
+        steps:
+            - name: Change Working Directory
+              run: cd ~/stock-watcher
+            - name: Checkout Repository
+              run: |
+                git pull origin main
+                git switch main
+            - name: Deploy Application
+              run: |
+                docker pull odumag99/stock-watcher:latest
+                docker compose -f docker-compose.yaml run --rm stock_watcher >> ./logs 2>&1 || echo "Deployment failed, check logs for details"
